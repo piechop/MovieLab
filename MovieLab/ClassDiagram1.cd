@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MovieLab.Models.Movie">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAFAAAAAAgEAAAAIAAAAAAAAQAAAAAAAAABAAACA=</HashCode>
+      <FileName>Models\Movie.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MovieLab.Models.Review">
+    <Position X="3" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAEAAAAgAgAAAACAAAAIAAAAAAAAAAAEAA=</HashCode>
+      <FileName>Models\Review.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MovieLab.Models.ApplicationUser">
+    <Position X="5.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAAAAgAAAACAAAAAAAgAAAEAAAAAAA=</HashCode>
+      <FileName>Models\IdentityModels.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

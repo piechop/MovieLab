@@ -1,0 +1,22 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>The Movie Manager</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2>About our service</h2>
+        <p>
+            The Movie Manager offers a selection of historic and modern movies to peruse at your leisure.
+        </p>
+    </div>
+
+    <div class="col-md-6">
+        <h2>How to get started</h2>
+        <p>To view a list of movies, click the button below.</p>
+        <button type="button" onclick="location.href='@Url.Action("Index","Movies")'" class="btn">Movie List</button>
+    </div>
+</div>
