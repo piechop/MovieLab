@@ -25,9 +25,9 @@ Page @(pagedList.PageCount < pagedList.PageNumber ? 0 : pagedList.PageNumber) of
         <div class="form-group">
             @Html.Label("Filter by Year Released", htmlAttributes: new { @class = "control-label col-md-2" })
             @Html.DropDownList("yearFilter",
-                                       new SelectList(ViewBag.Years),
-                                       "All Years",
-                                       new { @class = "form-control" })
+                                            new SelectList(ViewBag.Years),
+                                            "All Years",
+                                            new { @class = "form-control" })
         </div>
 
         <div class="form-group">
@@ -70,7 +70,8 @@ Page @(pagedList.PageCount < pagedList.PageNumber ? 0 : pagedList.PageNumber) of
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
                 @Html.ActionLink("Details", "Details", new { id = item.ID }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                @Html.ActionLink("Delete", "Delete", new { id = item.ID }) |
+                @Html.ActionLink("Reviews", "ListOfReviewsByMovie", "Reviews", new { movieID = item.ID }, null)
             </td>
         </tr>
     }

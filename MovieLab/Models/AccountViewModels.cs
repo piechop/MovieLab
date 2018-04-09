@@ -116,4 +116,54 @@ namespace MovieLab.Models
         [Display(Name = "Correo electrónico")]
         public string Email { get; set; }
     }
+
+    public class EditUserViewModel
+    {
+        public EditUserViewModel() { }
+
+        public EditUserViewModel(ApplicationUser user)
+        {
+            ReviewCount = user.ReviewCount;
+            Active = user.Active;
+            UserRating = user.UserRating;
+            FavoriteMovie = user.FavoriteMovie;
+            Email = user.Email;
+        }
+
+        [Key]
+        public string Email { get; set; }
+
+        public int ReviewCount { get; set; }
+
+        public bool Active { get; set; }
+
+        public int UserRating { get; set; }
+
+        public Movie FavoriteMovie { get; set; }
+    }
+
+    public class CreateUserViewModel
+    {
+        public CreateUserViewModel() { }
+
+        public CreateUserViewModel(ApplicationUser user)
+        {
+            ReviewCount = user.ReviewCount;
+            Active = user.Active;
+            UserRating = user.UserRating;
+            FavoriteMovie = user.FavoriteMovie;
+            Email = user.Email;
+        }
+
+        [Key]
+        public string Email { get; set; }
+
+        public int ReviewCount { get; set; }
+
+        public bool Active { get; set; }
+
+        public int UserRating { get; set; }
+
+        public Movie FavoriteMovie { get; set; }
+    }
 }

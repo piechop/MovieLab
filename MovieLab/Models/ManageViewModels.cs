@@ -83,4 +83,31 @@ namespace MovieLab.Models
         public string SelectedProvider { get; set; }
         public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
     }
+
+    public class ReviewViewModel
+    {
+        public ReviewViewModel()
+        {
+            MovieID = 0;
+        }
+        public int ID { get; set; }
+
+        public string ReviewTitle { get; set; }
+
+        public string ReviewText { get; set; }
+
+        public byte MovieRating { get; set; }
+
+        public byte ReviewRating { get; set; }
+
+        public System.DateTime ReviewTime { get; set; }
+
+        public ApplicationUser Author { get; set; }
+
+        public int MovieID { get; set; }
+
+        [Display(Name = "Movie")]
+        public string MovieTitle { get; set; }
+
+    }
 }

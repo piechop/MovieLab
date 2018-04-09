@@ -1,0 +1,58 @@
+﻿@model MovieLab.Models.EditUserViewModel
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>EditUserViewModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Active)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Active)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UserRating)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserRating)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ReviewCount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReviewCount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FavoriteMovie)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FavoriteMovie)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Email }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

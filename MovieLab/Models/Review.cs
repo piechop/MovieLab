@@ -7,6 +7,11 @@ namespace MovieLab.Models
 {
     public class Review
     {
+        public Review()
+        {
+            MovieID = 0;
+        }
+
         public int ID { get; set; }
 
         public string ReviewText { get; set; }
@@ -19,20 +24,8 @@ namespace MovieLab.Models
 
         public ApplicationUser Author { get; set; }
 
-        public int MovieTitle
-        {
-            get => default(int);
-            set
-            {
-            }
-        }
+        public int MovieID { get; set; }
 
-        public int ReviewTitle
-        {
-            get => default(int);
-            set
-            {
-            }
-        }
+        public string ReviewTitle { get; set; }
     }
 }

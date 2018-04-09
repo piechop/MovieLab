@@ -1,0 +1,70 @@
+﻿@model IEnumerable<MovieLab.Models.ReviewViewModel>
+
+@{
+    ViewBag.Title = "Movie Review Administration";
+}
+
+<h2>Movie Review Administration</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ReviewTitle)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Author)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MovieTitle)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReviewTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReviewText)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MovieRating)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReviewRating)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.ReviewTitle)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Author)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MovieTitle)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ReviewTime)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ReviewText)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MovieRating)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ReviewRating)
+        </td>
+
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+            @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+        </td>
+    </tr>
+}
+
+</table>

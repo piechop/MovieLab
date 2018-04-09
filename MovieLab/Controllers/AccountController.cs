@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity.Validation;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
@@ -26,6 +29,136 @@ namespace MovieLab.Controllers
         {
             UserManager = userManager;
             SignInManager = signInManager;
+        }
+
+        public ActionResult Index()
+        {
+            var db = new ApplicationDbContext();
+            var users = db.Users;
+            var model = new List<EditUserViewModel>();
+
+            foreach(var user in users)
+            {
+                var u = new EditUserViewModel(user);
+                model.Add(u);
+            }
+
+            return View(model);
+        }
+
+        public ActionResult Details(string email = null)
+        {
+            var db = new ApplicationDbContext();
+            var user = db.Users.First(e => e.Email == email);
+            var model = new EditUserViewModel(user);
+
+            if(user == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(model);
+        }
+
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind(Include = "Active, Email, UserRating, ReviewCount")] CreateUserViewModel user)
+        {
+            var db = new ApplicationDbContext();
+            
+            if(ModelState.IsValid)
+            {
+                var newUser = new ApplicationUser();
+               
+                newUser.Active = user.Active;
+                newUser.Email = user.Email;
+                newUser.UserName = user.Email;
+                newUser.UserRating = user.UserRating;
+                newUser.ReviewCount = user.ReviewCount;
+                //newUser.FavoriteMovie = user.FavoriteMovie;
+
+                db.Users.Add(newUser);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+                
+            }
+
+            return View(user);
+        }
+
+        public ActionResult Edit(string email = null)
+        {
+            if(email == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var db = new ApplicationDbContext();
+            var user = db.Users.First(e => e.Email == email);
+            var model = new EditUserViewModel(user);
+
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit([Bind(Include = "Active, Email, UserRating, ReviewCount")] EditUserViewModel userModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var db = new ApplicationDbContext();
+                var user = db.Users.First(e => e.Email == userModel.Email);
+
+                user.Active = userModel.Active;
+                user.Email = userModel.Email;
+                user.UserName = userModel.Email;
+                user.UserRating = userModel.UserRating;
+                user.ReviewCount = userModel.ReviewCount;
+
+                db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+
+            }
+
+            return View(userModel);
+        }
+
+        public ActionResult Delete(string email = null)
+        {
+            var db = new ApplicationDbContext();
+            var user = db.Users.First(e => e.Email == email);
+            var model = new EditUserViewModel(user);
+
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(model);
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete")]
+        public ActionResult DeleteConfirmed(string email)
+        {
+            var db = new ApplicationDbContext();
+            var user = db.Users.First(e => e.Email == email);
+
+            db.Users.Remove(user);
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
         }
 
         public ApplicationSignInManager SignInManager
