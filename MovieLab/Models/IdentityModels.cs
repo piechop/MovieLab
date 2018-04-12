@@ -20,7 +20,7 @@ namespace MovieLab.Models
         public int ReviewCount { get; set; }
         public bool Active { get; set; }
         public int UserRating { get; set; }
-        public Movie FavoriteMovie { get; set; }
+        public string FavoriteMovie { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>

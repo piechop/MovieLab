@@ -197,6 +197,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\IdentityRoleController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MoviesController.cs" />
     <Compile Include="Controllers\ReviewsController.cs" />
@@ -210,6 +211,10 @@
     <Compile Include="Migrations\201804081734082_reviewModel.cs" />
     <Compile Include="Migrations\201804081734082_reviewModel.Designer.cs">
       <DependentUpon>201804081734082_reviewModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804101850071_changeFavMovie.cs" />
+    <Compile Include="Migrations\201804101850071_changeFavMovie.Designer.cs">
+      <DependentUpon>201804101850071_changeFavMovie.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -301,6 +306,13 @@
     <Content Include="Views\Account\Create.cshtml" />
     <Content Include="Views\Account\Edit.cshtml" />
     <Content Include="Views\Account\Delete.cshtml" />
+    <Content Include="Views\IdentityRole\Index.cshtml" />
+    <Content Include="Views\IdentityRole\Details.cshtml" />
+    <Content Include="Views\IdentityRole\Create.cshtml" />
+    <Content Include="Views\IdentityRole\Edit.cshtml" />
+    <Content Include="Views\IdentityRole\Delete.cshtml" />
+    <Content Include="Views\Account\ViewUsersRoles.cshtml" />
+    <Content Include="Views\Account\AddRoleToUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -324,6 +336,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804081734082_reviewModel.resx">
       <DependentUpon>201804081734082_reviewModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804101850071_changeFavMovie.resx">
+      <DependentUpon>201804101850071_changeFavMovie.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
