@@ -12,6 +12,15 @@ namespace MovieLab.Models
         public string PhoneNumber { get; set; }
         public bool TwoFactor { get; set; }
         public bool BrowserRemembered { get; set; }
+
+        [Display(Name = "Reviews Written")]
+        public int ReviewCount { get; set; }
+
+        [Display(Name = "Average rating for user")]
+        public int UserRating { get; set; }
+
+        [Display(Name = "Your favorite movie")]
+        public string FavoriteMovie { get; set; }
     }
 
     public class ManageLoginsViewModel

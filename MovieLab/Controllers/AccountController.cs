@@ -13,6 +13,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using MovieLab.Models;
+using MovieLab.CustomAttributes;
 
 namespace MovieLab.Controllers
 {
@@ -32,6 +33,7 @@ namespace MovieLab.Controllers
             SignInManager = signInManager;
         }
 
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
         public ActionResult Index()
         {
             var db = new ApplicationDbContext();
@@ -47,6 +49,7 @@ namespace MovieLab.Controllers
             return View(model);
         }
 
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
         public ActionResult Details(string email = null)
         {
             var db = new ApplicationDbContext();
@@ -68,7 +71,8 @@ namespace MovieLab.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Active, Email, UserRating, ReviewCount")] CreateUserViewModel user)
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
+        public async Task<ActionResult> Create([Bind(Include = "Active, Email, UserRating, ReviewCount, Password, ConfirmPassword")] CreateUserViewModel user)
         {
             var db = new ApplicationDbContext();
             
@@ -81,18 +85,25 @@ namespace MovieLab.Controllers
                 newUser.UserName = user.Email;
                 newUser.UserRating = user.UserRating;
                 newUser.ReviewCount = user.ReviewCount;
-                newUser.SecurityStamp = Guid.NewGuid().ToString();
                 //newUser.FavoriteMovie = user.FavoriteMovie;
 
-                db.Users.Add(newUser);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-                
+                var result = await UserManager.CreateAsync(newUser, user.Password);
+                if(result.Succeeded)
+                {
+                    PasswordHasher ph = new PasswordHasher();
+                    newUser.PasswordHash = ph.HashPassword(user.Password);
+
+                    UserManager.AddToRole(newUser.Id, "Guest");
+
+                    return RedirectToAction("Index", "Account");
+                }
+                AddErrors(result);
             }
 
             return View(user);
         }
 
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
         public ActionResult Edit(string email = null)
         {
             if(email == null)
@@ -114,7 +125,8 @@ namespace MovieLab.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Active, Email, UserRating, ReviewCount")] EditUserViewModel userModel)
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
+        public ActionResult Edit([Bind(Include = "Active, Email, UserRating, ReviewCount, Password, ConfirmPassword")] EditUserViewModel userModel)
         {
             if (ModelState.IsValid)
             {
@@ -127,6 +139,12 @@ namespace MovieLab.Controllers
                 user.UserRating = userModel.UserRating;
                 user.ReviewCount = userModel.ReviewCount;
 
+                if(userModel.Password != null)
+                {
+                    PasswordHasher ph = new PasswordHasher();
+                    user.PasswordHash = ph.HashPassword(userModel.Password);
+                }
+
                 db.Entry(user).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -136,6 +154,7 @@ namespace MovieLab.Controllers
             return View(userModel);
         }
 
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
         public ActionResult Delete(string email = null)
         {
             var db = new ApplicationDbContext();
@@ -150,6 +169,7 @@ namespace MovieLab.Controllers
             return View(model);
         }
 
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
         [ValidateAntiForgeryToken]
         [HttpPost, ActionName("Delete")]
         public ActionResult DeleteConfirmed(string email)
@@ -286,7 +306,7 @@ namespace MovieLab.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, ReviewCount = model.ReviewCount, Active = model.Active };
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Active = model.Active };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -560,6 +580,7 @@ namespace MovieLab.Controllers
 
         #region USER ROLE MANAGEMENT
 
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
         public ActionResult ViewUsersRoles(string userName = null)
         {
             if (!string.IsNullOrWhiteSpace(userName))
@@ -590,6 +611,7 @@ namespace MovieLab.Controllers
             return View();
         }
 
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
         public ActionResult AddRoleToUser(string userName = null)
         {
             List<string> roles;
@@ -608,6 +630,7 @@ namespace MovieLab.Controllers
         }
 
         [HttpPost]
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
         [ValidateAntiForgeryToken]
         public ActionResult AddRoleToUser(string roleName, string userName)
         {
@@ -659,7 +682,7 @@ namespace MovieLab.Controllers
             }
         }
 
-
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
         public ActionResult DeleteRoleForUser(string userName = null, string roleName = null)
         {
             if ((!string.IsNullOrWhiteSpace(userName)) || (!string.IsNullOrWhiteSpace(roleName)))

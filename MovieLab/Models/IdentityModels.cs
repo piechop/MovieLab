@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -17,9 +18,15 @@ namespace MovieLab.Models
             return userIdentity;
         }
 
+        [Display(Name = "Reviews Written")]
         public int ReviewCount { get; set; }
+
         public bool Active { get; set; }
+
+        [Display(Name = "Average rating for user")]
         public int UserRating { get; set; }
+
+        [Display(Name = "Your favorite movie")]
         public string FavoriteMovie { get; set; }
     }
 

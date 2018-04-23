@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using MovieLab.Models;
 using PagedList;
+using MovieLab.CustomAttributes;
 
 namespace MovieLab.Controllers
 {
@@ -49,6 +50,7 @@ namespace MovieLab.Controllers
         }
 
         // GET: Movies/Create
+        [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin")]
         public ActionResult Create()
         {
             return View();
@@ -59,6 +61,7 @@ namespace MovieLab.Controllers
         // más información vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin")]
         public ActionResult Create([Bind(Include = "ID,Title,Genre,Release,MinuteLength,Director,Producer")] Movie movie)
         {
             if (ModelState.IsValid)
@@ -72,6 +75,7 @@ namespace MovieLab.Controllers
         }
 
         // GET: Movies/Edit/5
+        [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -91,6 +95,7 @@ namespace MovieLab.Controllers
         // más información vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin")]
         public ActionResult Edit([Bind(Include = "ID,Title,Genre,Release,MinuteLength,Director,Producer")] Movie movie)
         {
             if (ModelState.IsValid)
@@ -103,6 +108,7 @@ namespace MovieLab.Controllers
         }
 
         // GET: Movies/Delete/5
+        [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -119,6 +125,7 @@ namespace MovieLab.Controllers
 
         // POST: Movies/Delete/5
         [HttpPost, ActionName("Delete")]
+        [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {

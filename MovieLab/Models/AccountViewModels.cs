@@ -64,6 +64,11 @@ namespace MovieLab.Models
 
     public class RegisterViewModel
     {
+        public RegisterViewModel()
+        {
+            Active = true;
+        }
+
         [Required]
         [EmailAddress]
         [Display(Name = "Correo electrónico")]
@@ -79,10 +84,6 @@ namespace MovieLab.Models
         [Display(Name = "Confirmar contraseña")]
         [Compare("Password", ErrorMessage = "La contraseña y la contraseña de confirmación no coinciden.")]
         public string ConfirmPassword { get; set; }
-
-        [Required]
-        [Display(Name = "Reviews Written")]
-        public int ReviewCount { get; set; }
 
         [Required]
         public bool Active { get; set; }
@@ -135,8 +136,7 @@ namespace MovieLab.Models
         [EmailAddress]
         [Display(Name = "Correo electrónico")]
         public string Email { get; set; }
-
-        [Required]
+        
         [StringLength(100, ErrorMessage = "El número de caracteres de {0} debe ser al menos {2}.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Contraseña")]
@@ -147,12 +147,15 @@ namespace MovieLab.Models
         [Compare("Password", ErrorMessage = "La contraseña y la contraseña de confirmación no coinciden.")]
         public string ConfirmPassword { get; set; }
 
+        [Display(Name = "Reviews Written")]
         public int ReviewCount { get; set; }
 
         public bool Active { get; set; }
 
+        [Display(Name = "Average rating for user")]
         public int UserRating { get; set; }
 
+        [Display(Name = "Your favorite movie")]
         public string FavoriteMovie { get; set; }
     }
 
@@ -186,12 +189,15 @@ namespace MovieLab.Models
         [Compare("Password", ErrorMessage = "La contraseña y la contraseña de confirmación no coinciden.")]
         public string ConfirmPassword { get; set; }
 
+        [Display(Name = "Reviews Written")]
         public int ReviewCount { get; set; }
 
         public bool Active { get; set; }
 
+        [Display(Name = "Average rating for user")]
         public int UserRating { get; set; }
 
+        [Display(Name = "Your favorite movie")]
         public string FavoriteMovie { get; set; }
     }
 

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using MovieLab.CustomAttributes;
 
 namespace MovieLab.Controllers
 {
@@ -14,11 +15,13 @@ namespace MovieLab.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: IdentityRole
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
         public ActionResult Index()
         {
             return View(db.Roles.ToList());
         }
 
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
         public ActionResult Details(string id)
         {
             if(id == null)
@@ -41,6 +44,7 @@ namespace MovieLab.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
         public ActionResult Create([Bind(Include = "Id, Name")] IdentityRole role)
         {
             if(ModelState.IsValid)
@@ -53,6 +57,7 @@ namespace MovieLab.Controllers
             return View(role);
         }
 
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
         public ActionResult Edit(string id)
         {
             if(id == null)
@@ -70,6 +75,7 @@ namespace MovieLab.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
         public ActionResult Edit([Bind(Include = "Id, Name")] IdentityRole role)
         {
             if(ModelState.IsValid)
@@ -82,6 +88,7 @@ namespace MovieLab.Controllers
             return View(role);
         }
 
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
         public ActionResult Delete(string id)
         {
             if(id == null)
@@ -99,6 +106,7 @@ namespace MovieLab.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
         public ActionResult DeleteConfirmed(string id)
         {
             IdentityRole identityRoleTemp = db.Roles.Find(id);

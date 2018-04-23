@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using MovieLab.CustomAttributes;
 
 namespace MovieLab.Controllers
 {
@@ -27,6 +28,7 @@ namespace MovieLab.Controllers
             return View();
         }
 
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
         public ActionResult Admin()
         {
             return View();
