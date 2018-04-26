@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<MovieLab.Models.ReviewViewModel>
 
 @{
-    ViewBag.Title = "Movie Review Administration";
+    ViewBag.Title = "Movie Review List";
 }
 
-<h2>Movie Review Administration</h2>
+<h2>Movie Review List</h2>
 
 @if (User.IsInRole("Movie Admin") || User.IsInRole("Site Admin"))
 {

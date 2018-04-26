@@ -28,7 +28,7 @@ namespace MovieLab.Controllers
             return View();
         }
 
-        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin, Movie Admin")]
         public ActionResult Admin()
         {
             return View();

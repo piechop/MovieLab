@@ -218,6 +218,10 @@
     <Compile Include="Migrations\201804101850071_changeFavMovie.Designer.cs">
       <DependentUpon>201804101850071_changeFavMovie.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201804261759033_author.cs" />
+    <Compile Include="Migrations\201804261759033_author.Designer.cs">
+      <DependentUpon>201804261759033_author.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Genre.cs" />
@@ -342,6 +346,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804101850071_changeFavMovie.resx">
       <DependentUpon>201804101850071_changeFavMovie.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804261759033_author.resx">
+      <DependentUpon>201804261759033_author.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -6,6 +6,8 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
+using MovieLab.CustomAttributes;
 using MovieLab.Models;
 
 namespace MovieLab.Controllers
@@ -37,6 +39,7 @@ namespace MovieLab.Controllers
         }
 
         // GET: Reviews/Create
+        [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin")]
         public ActionResult Create()
         {
             var movieList = db.movie.Select(m => m);
@@ -50,6 +53,7 @@ namespace MovieLab.Controllers
         // más información vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin")]
         public ActionResult Create([Bind(Include = "ID,ReviewText,MovieRating,ReviewRating,ReviewTime,MovieID,ReviewTitle")] Review review)
         {
             if (ModelState.IsValid)
@@ -63,8 +67,10 @@ namespace MovieLab.Controllers
         }
 
         // GET: Reviews/Edit/5
+        [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin, Reviewer")]
         public ActionResult Edit(int? id)
         {
+            
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -73,17 +79,24 @@ namespace MovieLab.Controllers
 
             Review review = db.review.Find(id);
 
-            SelectList list = new SelectList(movieList, "Id", "Title");
-            
-            ViewBag.SelectMovieList = list;
-
-            ReviewViewModel reviewViewModel = BuildReviewViewModel(review);
-
-            if (review == null)
+            if (User.Identity.GetUserName() == review.Author || User.IsInRole("Site Admin") || User.IsInRole("Move Admin"))
             {
-                return HttpNotFound();
+                SelectList list = new SelectList(movieList, "Id", "Title");
+
+                ViewBag.SelectMovieList = list;
+
+                ReviewViewModel reviewViewModel = BuildReviewViewModel(review);
+
+                if (review == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(reviewViewModel);
             }
-            return View(reviewViewModel);
+            else
+            {
+                return RedirectToAction("AccessDenied", "Error");
+            }
         }
 
         // POST: Reviews/Edit/5
@@ -91,18 +104,27 @@ namespace MovieLab.Controllers
         // más información vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin, Reviewer")]
         public ActionResult Edit([Bind(Include = "ID,ReviewText,MovieRating,ReviewRating,ReviewTime,MovieID,ReviewTitle")] Review review)
         {
-            if (ModelState.IsValid)
+            if (User.Identity.GetUserName() == review.Author || User.IsInRole("Site Admin") || User.IsInRole("Move Admin"))
             {
-                db.Entry(review).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (ModelState.IsValid)
+                {
+                    db.Entry(review).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                return View(review);
             }
-            return View(review);
+            else
+            {
+                return RedirectToAction("AccessDenied", "Error");
+            }
         }
 
         // GET: Reviews/Delete/5
+        [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin, Reviewer")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -111,26 +133,43 @@ namespace MovieLab.Controllers
             }
 
             Review review = db.review.Find(id);
-            ReviewViewModel reviewViewModel = BuildReviewViewModel(review);
 
-            if (review == null)
+            if (User.Identity.GetUserName() == review.Author || User.IsInRole("Site Admin") || User.IsInRole("Move Admin"))
             {
-                return HttpNotFound();
+                ReviewViewModel reviewViewModel = BuildReviewViewModel(review);
+
+                if (review == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(reviewViewModel);
             }
-            return View(reviewViewModel);
+            else
+            {
+                return RedirectToAction("AccessDenied", "Error");
+            }
         }
 
         // POST: Reviews/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin, Reviewer")]
         public ActionResult DeleteConfirmed(int id)
         {
             Review review = db.review.Find(id);
-            db.review.Remove(review);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            if (User.Identity.GetUserName() == review.Author || User.IsInRole("Site Admin") || User.IsInRole("Move Admin"))
+            {
+                db.review.Remove(review);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return RedirectToAction("AccessDenied", "Error");
+            }
         }
 
+        [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin, Reviewer")]
         public ActionResult UserCreate()
         {
             return View();
@@ -138,10 +177,15 @@ namespace MovieLab.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult UserCreate([Bind(Include = "ID, ReviewTime, ReviewTitle, MovieRating, ReviewRating, ReviewText, MovieID")] Review review, int movieID)
+        [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin, Reviewer")]
+        public ActionResult UserCreate([Bind(Include = "ID, Author, ReviewTime, ReviewTitle, MovieRating, ReviewRating, ReviewText, MovieID")] Review review, int movieID)
         {
             if(ModelState.IsValid)
             {
+                ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
+                user.ReviewCount = user.ReviewCount + 1;
+                db.SaveChanges();
+
                 review.MovieID = movieID;
                 db.review.Add(review);
                 db.SaveChanges();

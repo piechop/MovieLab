@@ -15,6 +15,7 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => r.ReviewTitle) <br />
+                by @Html.DisplayFor(modelItem => r.Author) <br/>
                 @Html.DisplayFor(modelItem => r.MovieRating) / 100<br />
                 @Html.DisplayFor(modelItem => r.ReviewText) <br />
                 @Html.DisplayFor(modelItem => r.ReviewTime) <br />
@@ -24,7 +25,11 @@
 
 </table>
 
-@Html.ActionLink("Write a Review", "UserCreate", "Reviews", new { movieID = movie.ID}, null)
-<br />
+@if (User.IsInRole("Reviewer"))
+{
+    @Html.ActionLink("Write a Review", "UserCreate", "Reviews", new { movieID = movie.ID }, null)
+    <br />
+}
+
 @Html.ActionLink("Return to movie list", "Index", "Movies")
 
