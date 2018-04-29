@@ -8,9 +8,9 @@
 <div>
     <h4>Movie</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt><img src='@Html.DisplayFor(model => model.Photo).ToHtmlString()' alt="Movie Photo" height="200" width="150" /></dt>
-        <dd></dd>
+    <img src='@Html.DisplayFor(model => model.Photo).ToHtmlString()' class="col-md-2" alt="Movie Photo" height="200" width="150" />
+    <dl class="dl-horizontal col-md-10">
+
         <dt>
             @Html.DisplayNameFor(model => model.Title)
         </dt>
@@ -57,6 +57,14 @@
 
         <dd>
             @Html.DisplayFor(model => model.Producer)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Synopsis)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Synopsis)
         </dd>
 
     </dl>

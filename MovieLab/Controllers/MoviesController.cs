@@ -23,17 +23,25 @@ namespace MovieLab.Controllers
         [HttpGet]
         public ActionResult Index(string sortOrder, int? page)
         {
+            //List<Movie> mov = db.movie.ToList();
+            //foreach (Movie m in mov)
+            //{
+            //    m.Synopsis = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+            //    db.Entry(m).State = EntityState.Modified;
+            //    db.SaveChanges();
+            //}
+
             IEnumerable<Movie> movies = SetupMovieList(page);
 
             return View(MoviesToPagedList(movies, sortOrder, page));
         }
 
         [HttpPost]
-        public ActionResult Index(string searchCriteria, int? yearFilter, int? page)
+        public ActionResult Index(string searchCriteria, int? yearFilter, string genreFilter, int? page)
         {
             IEnumerable<Movie> movies = SetupMovieList(page);
 
-            return View(MoviesToPagedList(movies, searchCriteria, yearFilter, page));
+            return View(MoviesToPagedList(movies, searchCriteria, yearFilter, "", genreFilter, page));
         }
 
         // GET: Movies/Details/5
@@ -118,6 +126,10 @@ namespace MovieLab.Controllers
 
                 if (fileUpload != null)
                 {
+                    if ((System.IO.File.Exists(Server.MapPath("~") + movie.Photo)))
+                    {
+                        System.IO.File.Delete(Server.MapPath("~") + movie.Photo);
+                    }
                     movie.Photo = UploadFile(fileUpload);
                 }
 
@@ -179,6 +191,11 @@ namespace MovieLab.Controllers
 
             IEnumerable<Movie> movies = db.movie.ToList();
 
+            var genreList = new List<Genre>() { Genre.Action, Genre.Adventure, Genre.Animation,
+                Genre.Comedy, Genre.Documentary, Genre.Drama, Genre.Fantasy, Genre.Horror,
+                Genre.Mystery, Genre.Romance, Genre.Science_Fiction, Genre.Thriller, Genre.Western};
+            ViewBag.Genres = genreList;
+
             ViewBag.Years = ListOfYears(movies);
 
             return movies;
@@ -201,11 +218,12 @@ namespace MovieLab.Controllers
         }
 
         [NonAction]
-        private IPagedList<Movie> MoviesToPagedList(IEnumerable<Movie> movies, string searchCriteria, int? yearFilter, string sortOrder, int? page)
+        private IPagedList<Movie> MoviesToPagedList(IEnumerable<Movie> movies, string searchCriteria, int? yearFilter, string sortOrder, string genreFilter, int? page)
         {
 
             movies = FilterMoviesByCriteria(searchCriteria, movies);
             movies = FilterMoviesByYear(yearFilter, movies);
+            movies = FilterMoviesByGenre(genreFilter, movies);
             movies = SortMovies(sortOrder, movies);
 
             return movies.ToPagedList(_pageNumber, _pageSize);
@@ -254,6 +272,16 @@ namespace MovieLab.Controllers
                     movies = movies.OrderBy(m => m.Title);
                     break;
             }
+
+            return movies;
+        }
+
+        [NonAction]
+        private IEnumerable<Movie> FilterMoviesByGenre(string genreFilter, IEnumerable<Movie> movies)
+        {
+            ViewBag.CurrentGenre = genreFilter;
+
+            movies = movies.Where(m => m.Genre.ToString() == genreFilter);
 
             return movies;
         }

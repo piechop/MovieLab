@@ -11,9 +11,9 @@
 <h2>Movies</h2>
 
 Page @(pagedList.PageCount < pagedList.PageNumber ? 0 : pagedList.PageNumber) of @pagedList.PageCount
-@Html.PagedListPager(pagedList, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, yearFilter = ViewBag.CurrentFilter, searchCriteria = ViewBag.CurrentCriteria }))
+@Html.PagedListPager(pagedList, page => Url.Action("Index", new { page, genreFilter = ViewBag.CurrentGenre, sortOrder = ViewBag.CurrentSort, yearFilter = ViewBag.CurrentFilter, searchCriteria = ViewBag.CurrentCriteria }))
 
-@using (Html.BeginForm())
+@using (Html.BeginForm(new { page = 1 }))
 {
     <div id="FilterSearch" class="form-horizontal">
 
@@ -29,6 +29,13 @@ Page @(pagedList.PageCount < pagedList.PageNumber ? 0 : pagedList.PageNumber) of
                                                  "All Years",
                                                  new { @class = "form-control" })
         </div>
+
+        <div class="form-group">
+            @Html.Label("Filter by Genre", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.DropDownList("genreFilter", new SelectList(ViewBag.Genres), "All Genres", new { @class = "form-control" })
+
+        </div>
+                
 
         <div class="form-group">
             <input type="submit" value="Find Movies" class="btn col-md-2 col-md-offset-2" />

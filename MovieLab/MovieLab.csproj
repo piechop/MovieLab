@@ -258,6 +258,10 @@
     <Compile Include="Migrations\201804290407532_photo.Designer.cs">
       <DependentUpon>201804290407532_photo.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201804292125479_synopsis.cs" />
+    <Compile Include="Migrations\201804292125479_synopsis.Designer.cs">
+      <DependentUpon>201804292125479_synopsis.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Genre.cs" />
@@ -417,6 +421,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804290407532_photo.resx">
       <DependentUpon>201804290407532_photo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804292125479_synopsis.resx">
+      <DependentUpon>201804292125479_synopsis.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

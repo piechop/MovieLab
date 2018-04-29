@@ -5,37 +5,83 @@
 @{
     ViewBag.Title = "Movie Reviews";
     var pagedList = (IPagedList)Model;
-    var movie = (MovieLab.Models.Movie)ViewBag.Movie;
+    MovieLab.Models.Movie movie = ViewBag.Movie;
 }
 
 <h2>Movie Reviews for @movie.Title</h2>
 Page @(pagedList.PageCount < pagedList.PageNumber ? 0 : pagedList.PageNumber) of @pagedList.PageCount
-@Html.PagedListPager(pagedList, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, yearFilter = ViewBag.CurrentFilter, searchCriteria = ViewBag.CurrentCriteria }))
+@Html.PagedListPager(pagedList, page => Url.Action("ListOfReviewsByMovie", new { page, filter = ViewBag.CurrentFilter, filter2 = ViewBag.CurrentFilter2, search = ViewBag.CurrentCriteria }))
 
-@*@using (Html.BeginForm())
+@using (Html.BeginForm(new { page = 1, movieID = movie.ID }))
 {
     <div id="FilterSearch" class="form-horizontal">
 
         <div class="form-group">
-            @Html.Label("Search by Title", htmlAttributes: new { @class = "control-label col-md-2" })
-            @Html.TextBox("searchCriteria", null, new { @class = "form-control" })
+            @Html.Label("Search by Author", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.TextBox("search", null, new { @class = "form-control" })
         </div>
 
         <div class="form-group">
-            @Html.Label("Filter by Year Released", htmlAttributes: new { @class = "control-label col-md-2" })
-            @Html.DropDownList("yearFilter",
-                                                 new SelectList(ViewBag.Years),
-                                                 "All Years",
-                                                 new { @class = "form-control" })
+            @Html.Label("Filter by Rating", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-1">@Html.TextBox("filter", null, new { @class = "form-control", @type = "number" }) to @Html.TextBox("filter2", null, new { @class = "form-control", @type = "number" })</div>
         </div>
 
         <div class="form-group">
-            <input type="submit" value="Find Movies" class="btn col-md-2 col-md-offset-2" />
-            <input type="button" value="Reset Movie List" onclick="location.href='@Url.Action("Index","Movies")'" class="btn col-md-2 col-md-offset-2" />
+            <input type="submit" value="Find Reviews" class="btn col-md-2 col-md-offset-2" />
+            <input type="button" value="Reset Review List" onclick="location.href='@Url.Action("ListOfReviewsByMovie","Reviews", new { movieID = movie.ID})'" class="btn col-md-2 col-md-offset-2" />
         </div>
 
     </div>
-}*@
+}
+<hr/>
+
+<img src='@movie.Photo' alt="Movie Photo" class="col-md-2" style="margin-bottom:1.5em;" height="200" width="150" />
+    <dl class="dl-horizontal col-md-6">
+
+        <dt>
+            @Html.Label("Genre")
+        </dt>
+        <dd>
+            @movie.Genre.ToString()
+        </dd>
+
+        <dt>
+            @Html.Label("Release Date")
+        </dt>
+
+        <dd>
+            @movie.Release.ToShortDateString()
+        </dd>
+
+        <dt>
+            @Html.Label("Length (minutes)")
+        </dt>
+
+        <dd>
+            @movie.MinuteLength.ToString()
+        </dd>
+
+        <dt>
+            @Html.Label("Director")
+        </dt>
+
+        <dd>
+            @movie.Director
+        </dd>
+
+        <dt>
+            @Html.Label("Producer")
+        </dt>
+
+        <dd>
+            @movie.Producer
+        </dd>
+
+        <dt>@Html.Label("Synopsis")</dt>
+        <dd>@movie.Synopsis</dd>
+
+    </dl>
+
 <table class="table">
 
     @foreach (var r in Model)

@@ -37,11 +37,29 @@
     }
 }
 
-<div class="jumbotron">
+<div class="jumbotron" style="padding-right:0">
+    <img src="~/Content/home.jpg" style=" margin-top: -48px; float:right; -webkit-mask-image:-webkit-gradient(linear, right top, left top, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));" height="200" width="500" />
     <h1>The Movie Manager</h1>
+
 </div>
 
+
+
 <div class="row">
+    <aside style="float:right; background-color:#eeeeee; border-radius: 10px;" class="col-md-3">
+    
+        <h4>Movie Showings Near You</h4>
+
+        <table class="table">
+            <tr><th>Movie</th><th>Date</th></tr>
+            @for(int i = 0; i < 10; i++)
+            {
+                <tr><td><a href="@Url.Action("Details", "Movies",new { id = movies[i].ID})">@movies[i].Title</a></td><td>@movies[i].Release</td></tr>
+            }
+        </table>
+    
+    </aside>
+
     <!--https://www.w3schools.com/bootstrap/bootstrap_carousel.asp-->
     <div class="col-md-4">
     <h4>Top Reviewed Movies</h4>
@@ -94,16 +112,15 @@
         </a>
     </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-5">
         <h2>About our service</h2>
         <p>
             The Movie Manager offers a selection of historic and modern movies to peruse at your leisure.
         </p>
-    </div>
 
-    <div class="col-md-4">
         <h2>How to get started</h2>
         <p>To view a list of movies, click the button below.</p>
         <button type="button" onclick="location.href='@Url.Action("Index","Movies")'" class="btn">Movie List</button>
+
     </div>
 </div>

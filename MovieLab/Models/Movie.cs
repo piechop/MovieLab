@@ -39,5 +39,7 @@ namespace MovieLab.Models
         public string Producer { get; set; }
 
         public string Photo { get; set; }
+
+        public string Synopsis { get; set; }
     }
 }

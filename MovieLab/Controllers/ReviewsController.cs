@@ -26,20 +26,85 @@ namespace MovieLab.Controllers
             _pageSize = 10;
             _pageNumber = (page ?? 1);
 
+            var movieList = db.movie.Select(m => m.Title);
+            ViewBag.SelectMovieList = movieList;
+
             return View(BuildReviewViewModelList(db.review.ToList()).ToPagedList(_pageNumber, _pageSize));
         }
-        
+
+        [HttpPost]
+        [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin")]
+        public ActionResult Index(int? page, string search, string filter)
+        {
+            ViewBag.CurrentSearch = search;
+            ViewBag.CurrentFilter = filter;
+
+            var movieList = db.movie.Select(m => m.Title);
+            ViewBag.SelectMovieList = movieList;
+
+            List<ReviewViewModel> rvm = BuildReviewViewModelList(db.review.ToList());
+
+            _pageSize = 10;
+            _pageNumber = (page ?? 1);
+
+            if (search != null && search != "")
+            {
+                rvm = rvm.Where(a => a.Author.ToUpper().Contains(search.ToUpper())).ToList();
+            }
+
+            if (filter != null)
+            {
+                rvm = rvm.Where(r => r.MovieTitle.ToUpper().Contains(filter.ToUpper())).ToList();
+            }
+
+            return View(rvm.ToPagedList(_pageNumber, _pageSize));
+        }
+
         [HttpGet]
         public ActionResult ListOfReviewsByAuthor(int? page)
         {
             _pageSize = 10;
             _pageNumber = (page ?? 1);
 
+            var movieList = db.movie.Select(m => m.Title);
+            ViewBag.SelectMovieList = movieList;
+
             string user = User.Identity.GetUserName();
             var reviews = db.review.Where(r => r.Author == user).ToList();
             ViewBag.User = user;
 
             return View(BuildReviewViewModelList(reviews).ToPagedList(_pageNumber, _pageSize));
+        }
+
+        [HttpPost]
+        public ActionResult ListOfReviewsByAuthor(int? page, string filter, string search)
+        {
+            _pageSize = 10;
+            _pageNumber = (page ?? 1);
+
+            ViewBag.CurrentSearch = search;
+            ViewBag.CurrentFilter = filter;
+
+            var movieList = db.movie.Select(m => m.Title);
+            ViewBag.SelectMovieList = movieList;
+
+            string user = User.Identity.GetUserName();
+            var reviews = db.review.Where(r => r.Author == user).ToList();
+            ViewBag.User = user;
+
+            List<ReviewViewModel> rvm = BuildReviewViewModelList(reviews);
+
+            if (search != null && search != "")
+            {
+                rvm = rvm.Where(a => a.ReviewTitle.ToUpper().Contains(search.ToUpper())).ToList();
+            }
+
+            if (filter != null && filter != "")
+            {
+                rvm = rvm.Where(r => r.MovieTitle.ToUpper().Contains(filter.ToUpper())).ToList();
+            }
+
+            return View(rvm.ToPagedList(_pageNumber, _pageSize));
         }
 
         [HttpGet]
@@ -52,6 +117,47 @@ namespace MovieLab.Controllers
 
             var movie = db.movie.FirstOrDefault(m => m.ID == movieID);
             ViewBag.Movie = movie;
+
+            if (movie != null)
+            {
+                return View(reviews.ToPagedList(_pageNumber, _pageSize));
+            }
+            else
+            {
+                ViewBag.ErrorMessage = "Movie not found.";
+                return View("Error");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult ListOfReviewsByMovie(int movieID, int? page, string search, int? filter, int? filter2)
+        {
+            _pageSize = 10;
+            _pageNumber = (page ?? 1);
+
+            ViewBag.CurrentSearch = search;
+            ViewBag.CurrentFilter = filter;
+            ViewBag.CurrentFilter2 = filter2;
+
+            var reviews = db.review.Where(r => r.MovieID == movieID).ToList();
+
+            var movie = db.movie.FirstOrDefault(m => m.ID == movieID);
+            ViewBag.Movie = movie;
+
+            if (search != null && search != "")
+            {
+                reviews = reviews.Where(a => a.Author.ToUpper().Contains(search.ToUpper())).ToList();
+            }
+
+            if (filter != null && filter >= 0 && filter <= 100)
+            {
+                reviews = reviews.Where(r => r.MovieRating >= filter).ToList();
+            }
+
+            if(filter2 != null && filter2 >= 0 && filter2 <= 100)
+            {
+                reviews = reviews.Where(r => r.MovieRating <= filter2).ToList();
+            }
 
             if (movie != null)
             {

@@ -51,11 +51,11 @@ namespace MovieLab.Models
         [Required]
         [StringLength(100, ErrorMessage = "{0} debe tener al menos {2} caracteres de longitud.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = "Contraseña nueva")]
+        [Display(Name = "New Password")]
         public string NewPassword { get; set; }
 
         [DataType(DataType.Password)]
-        [Display(Name = "Confirme la contraseña nueva")]
+        [Display(Name = "New Password Confirmation")]
         [Compare("NewPassword", ErrorMessage = "La contraseña nueva y la contraseña de confirmación no coinciden.")]
         public string ConfirmPassword { get; set; }
     }
@@ -64,17 +64,17 @@ namespace MovieLab.Models
     {
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "Contraseña actual")]
+        [Display(Name = "Current Password")]
         public string OldPassword { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "{0} debe tener al menos {2} caracteres de longitud.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = "Contraseña nueva")]
+        [Display(Name = "New Password")]
         public string NewPassword { get; set; }
 
         [DataType(DataType.Password)]
-        [Display(Name = "Confirme la contraseña nueva")]
+        [Display(Name = "New Password Confirmation")]
         [Compare("NewPassword", ErrorMessage = "La contraseña nueva y la contraseña de confirmación no coinciden.")]
         public string ConfirmPassword { get; set; }
     }
@@ -83,19 +83,19 @@ namespace MovieLab.Models
     {
         [Required]
         [Phone]
-        [Display(Name = "Número de teléfono")]
+        [Display(Name = "Telephone")]
         public string Number { get; set; }
     }
 
     public class VerifyPhoneNumberViewModel
     {
         [Required]
-        [Display(Name = "Código")]
+        [Display(Name = "Code")]
         public string Code { get; set; }
 
         [Required]
         [Phone]
-        [Display(Name = "Número de teléfono")]
+        [Display(Name = "Phone Number")]
         public string PhoneNumber { get; set; }
     }
 

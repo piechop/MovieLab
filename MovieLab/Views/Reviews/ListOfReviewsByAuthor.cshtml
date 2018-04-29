@@ -10,32 +10,29 @@
 <h2>Movie Reviews by @ViewBag.User</h2>
 <span class="text-danger">@ViewBag.Error</span>
 Page @(pagedList.PageCount < pagedList.PageNumber ? 0 : pagedList.PageNumber) of @pagedList.PageCount
-@Html.PagedListPager(pagedList, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, yearFilter = ViewBag.CurrentFilter, searchCriteria = ViewBag.CurrentCriteria }))
+@Html.PagedListPager(pagedList, page => Url.Action("ListOfReviewsByAuthor", new { page, filter = ViewBag.CurrentFilter, search = ViewBag.CurrentCriteria }))
 
-@*@using (Html.BeginForm())
+@using (Html.BeginForm(new { page = 1 }))
 {
     <div id="FilterSearch" class="form-horizontal">
 
         <div class="form-group">
             @Html.Label("Search by Title", htmlAttributes: new { @class = "control-label col-md-2" })
-            @Html.TextBox("searchCriteria", null, new { @class = "form-control" })
+            @Html.TextBox("search", null, new { @class = "form-control" })
         </div>
 
         <div class="form-group">
-            @Html.Label("Filter by Year Released", htmlAttributes: new { @class = "control-label col-md-2" })
-            @Html.DropDownList("yearFilter",
-                                                 new SelectList(ViewBag.Years),
-                                                 "All Years",
-                                                 new { @class = "form-control" })
+            @Html.Label("Filter by Movie", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.DropDownList("filter", new SelectList(ViewBag.SelectMovieList), "All Movies", new { @class = "form-control" })
         </div>
 
         <div class="form-group">
-            <input type="submit" value="Find Movies" class="btn col-md-2 col-md-offset-2" />
-            <input type="button" value="Reset Movie List" onclick="location.href='@Url.Action("Index","Movies")'" class="btn col-md-2 col-md-offset-2" />
+            <input type="submit" value="Find Reviews" class="btn col-md-2 col-md-offset-2" />
+            <input type="button" value="Reset Review List" onclick="location.href='@Url.Action("ListOfReviewsByAuthor","Reviews")'" class="btn col-md-2 col-md-offset-2" />
         </div>
 
     </div>
-}*@
+}
 <table class="table">
 
     @foreach (var r in Model)

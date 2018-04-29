@@ -39,6 +39,7 @@ namespace MovieLab.Controllers
         [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
         public ActionResult Index(int? page)
         {
+
             _pageSize = 10;
             _pageNumber = (page ?? 1);
 
@@ -50,6 +51,47 @@ namespace MovieLab.Controllers
             {
                 var u = new EditUserViewModel(user);
                 model.Add(u);
+            }
+
+            return View(model.ToPagedList(_pageNumber, _pageSize));
+        }
+
+        [HttpPost]
+        [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
+        public ActionResult Index(int? page, string search, string filter)
+        {
+            ViewBag.CurrentSearch = search;
+            ViewBag.CurrentFilter = filter;
+
+            _pageSize = 10;
+            _pageNumber = (page ?? 1);
+
+            var db = new ApplicationDbContext();
+            var users = db.Users;
+            var model = new List<EditUserViewModel>();
+
+            foreach (var user in users)
+            {
+                var u = new EditUserViewModel(user);
+                model.Add(u);
+            }
+
+            if (search != null && search != "")
+            {
+                model = model.Where(a => a.Email.ToUpper().Contains(search.ToUpper())).ToList();
+            }
+
+            if (filter != null)
+            {
+                switch (filter)
+                {
+                    case "Active":
+                        model = model.Where(m => m.Active).ToList();
+                        break;
+                    case "Inactive":
+                        model = model.Where(a => !a.Active).ToList();
+                        break;
+                }
             }
 
             return View(model.ToPagedList(_pageNumber, _pageSize));
