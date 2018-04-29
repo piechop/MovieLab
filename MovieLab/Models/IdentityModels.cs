@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
+using System.Drawing;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -28,6 +30,9 @@ namespace MovieLab.Models
 
         [Display(Name = "Your favorite movie")]
         public string FavoriteMovie { get; set; }
+
+        [Display(Name = "Your favorite genre")]
+        public string FavoriteGenre { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -44,5 +49,6 @@ namespace MovieLab.Models
 
         public DbSet<Movie> movie { get; set; }
         public DbSet<Review> review { get; set; }
-    }
+        public DbSet<Rating> rating { get; set; }
+      }
 }

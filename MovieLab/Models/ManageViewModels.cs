@@ -21,6 +21,18 @@ namespace MovieLab.Models
 
         [Display(Name = "Your favorite movie")]
         public string FavoriteMovie { get; set; }
+
+        [Display(Name = "Your favorite genre")]
+        public string FavoriteGenre { get; set; }
+    }
+
+    public class EditProfileView
+    {
+        [Display(Name = "Your favorite movie")]
+        public string FavoriteMovie { get; set; }
+
+        [Display(Name = "Your favorite genre")]
+        public string FavoriteGenre { get; set; }
     }
 
     public class ManageLoginsViewModel
@@ -102,6 +114,7 @@ namespace MovieLab.Models
         public int ID { get; set; }
 
         [Display(Name = "Review Title")]
+        [MaxLength(50, ErrorMessage = "Title must be 50 characters or less.")]
         public string ReviewTitle { get; set; }
 
         [DataType(DataType.MultilineText)]
@@ -109,10 +122,14 @@ namespace MovieLab.Models
         public string ReviewText { get; set; }
 
         [Display(Name = "Movie Rating")]
+        [Range(0, 100, ErrorMessage = "Rating must be between 0 and 100.")]
         public byte MovieRating { get; set; }
 
         [Display(Name = "Review Rating")]
+        [Range(0, 100, ErrorMessage = "Rating must be between 0 and 100.")]
         public byte ReviewRating { get; set; }
+
+        public int? Ratings { get; set; }
 
         [Display(Name = "Date Created")]
         public System.DateTime ReviewTime { get; set; }

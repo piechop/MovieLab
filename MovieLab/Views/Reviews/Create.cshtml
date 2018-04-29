@@ -1,7 +1,8 @@
 ﻿@model MovieLab.Models.Review
-
+@using Microsoft.AspNet.Identity;
 @{
     ViewBag.Title = "Create";
+    string user = User.Identity.GetUserName();
 }
 
 <h2>Create Review</h2>
@@ -14,6 +15,8 @@
     <h4>Review</h4>
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.Ratings)
+    @Html.EditorFor(model => model.Author, new { htmlAttributes = new { @class = "hidden", @Value = @user } })
 
     <div class="form-group">
         @Html.LabelFor(model => model.MovieID, htmlAttributes: new { @class = "control-label col-md-2" })

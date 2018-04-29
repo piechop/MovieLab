@@ -14,6 +14,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using MovieLab.Models;
 using MovieLab.CustomAttributes;
+using PagedList;
 
 namespace MovieLab.Controllers
 {
@@ -22,6 +23,8 @@ namespace MovieLab.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private int _pageSize;
+        private int _pageNumber;
 
         public AccountController()
         {
@@ -34,8 +37,11 @@ namespace MovieLab.Controllers
         }
 
         [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
-        public ActionResult Index()
+        public ActionResult Index(int? page)
         {
+            _pageSize = 10;
+            _pageNumber = (page ?? 1);
+
             var db = new ApplicationDbContext();
             var users = db.Users;
             var model = new List<EditUserViewModel>();
@@ -46,7 +52,7 @@ namespace MovieLab.Controllers
                 model.Add(u);
             }
 
-            return View(model);
+            return View(model.ToPagedList(_pageNumber, _pageSize));
         }
 
         [AuthorizeOrRedirectAttribute(Roles = "Site Admin")]
@@ -223,6 +229,7 @@ namespace MovieLab.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
+            bool isActive = UserManager.FindByEmail(model.Email).Active;
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -230,7 +237,19 @@ namespace MovieLab.Controllers
 
             // No cuenta los errores de inicio de sesión para el bloqueo de la cuenta
             // Para permitir que los errores de contraseña desencadenen el bloqueo de la cuenta, cambie a shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            SignInStatus result;
+            string activeResult = "";
+
+            if(!isActive)
+            {
+                result = SignInStatus.Failure;
+                activeResult = "Your account is currently inactive.";
+            }
+            else
+            {
+                result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            }
+
             switch (result)
             {
                 case SignInStatus.Success:
@@ -241,7 +260,7 @@ namespace MovieLab.Controllers
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
-                    ModelState.AddModelError("", "Intento de inicio de sesión no válido.");
+                    ModelState.AddModelError("", "Login attempt failed. " + activeResult);
                     return View(model);
             }
         }
@@ -310,6 +329,8 @@ namespace MovieLab.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    UserManager.AddToRole(user.Id, "Reviewer");
+
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // Para obtener más información sobre cómo habilitar la confirmación de cuentas y el restablecimiento de contraseña, visite https://go.microsoft.com/fwlink/?LinkID=320771

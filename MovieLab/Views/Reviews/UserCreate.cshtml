@@ -14,12 +14,14 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Ratings)
 
     <div class="form-horizontal">
         <h4>Review</h4>
+        <span class="text-danger">@ViewBag.Error</span>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        
+
         @Html.EditorFor(model => model.Author, new { htmlAttributes = new { @class = "hidden", @Value = @user } })
 
         @Html.EditorFor(model => model.ReviewRating, new { htmlAttributes = new { @class = "hidden", @Value = "0" } })

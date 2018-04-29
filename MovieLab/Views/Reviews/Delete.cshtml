@@ -62,12 +62,21 @@
 
     </dl>
 
-    @using (Html.BeginForm()) {
+    @using (Html.BeginForm(new { redirect = (string)ViewBag.Action }))
+    {
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">
             <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
+
+            @if(ViewBag.Action == "ListOfReviewsByMovie")
+            {
+                @Html.ActionLink("Back to List", (string)ViewBag.Action, "Reviews", new { movieID = (Model != null ? Model.MovieID : 0)}, null)
+            }
+            else
+            {
+                @Html.ActionLink("Back to List", (string)ViewBag.Action, "Reviews")
+            }
         </div>
     }
 </div>

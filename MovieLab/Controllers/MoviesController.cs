@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using MovieLab.Models;
 using PagedList;
 using MovieLab.CustomAttributes;
+using System.IO;
 
 namespace MovieLab.Controllers
 {
@@ -17,6 +18,7 @@ namespace MovieLab.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
         private int _pageSize;
         private int _pageNumber;
+        private static readonly int MAX_FILE_SIZE = (int)Math.Pow(10, 7);
 
         [HttpGet]
         public ActionResult Index(string sortOrder, int? page)
@@ -62,10 +64,15 @@ namespace MovieLab.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin")]
-        public ActionResult Create([Bind(Include = "ID,Title,Genre,Release,MinuteLength,Director,Producer")] Movie movie)
+        public ActionResult Create([Bind(Include = "ID,Title,Genre,Release,MinuteLength,Director,Producer, Photo")] Movie movie, HttpPostedFileBase fileUpload)
         {
             if (ModelState.IsValid)
             {
+                if (fileUpload != null)
+                {
+                    movie.Photo = UploadFile(fileUpload);
+                }
+
                 db.movie.Add(movie);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -96,10 +103,24 @@ namespace MovieLab.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin")]
-        public ActionResult Edit([Bind(Include = "ID,Title,Genre,Release,MinuteLength,Director,Producer")] Movie movie)
+        public ActionResult Edit([Bind(Include = "ID,Title,Genre,Release,MinuteLength,Director,Producer, Photo")] Movie movie, HttpPostedFileBase fileUpload, FormCollection collection)
         {
             if (ModelState.IsValid)
             {
+                if (collection["removeImage"] != null && Convert.ToBoolean(collection["removeImage"].Split(',')[0]))
+                {
+                    if ((System.IO.File.Exists(Server.MapPath("~") + movie.Photo)))
+                    {
+                        System.IO.File.Delete(Server.MapPath("~") + movie.Photo);
+                    }
+                    movie.Photo = "";
+                }
+
+                if (fileUpload != null)
+                {
+                    movie.Photo = UploadFile(fileUpload);
+                }
+
                 db.Entry(movie).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -130,6 +151,12 @@ namespace MovieLab.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Movie movie = db.movie.Find(id);
+
+            if ((System.IO.File.Exists(Server.MapPath("~") + movie.Photo)))
+            {
+                System.IO.File.Delete(Server.MapPath("~") + movie.Photo);
+            }
+
             db.movie.Remove(movie);
             db.SaveChanges();
             return RedirectToAction("Index");
@@ -237,6 +264,41 @@ namespace MovieLab.Controllers
             var years = movies.Select(m => m.Release.Year).Distinct().OrderBy(x => x);
 
             return years;
+        }
+
+        [NonAction]
+        public string UploadFile(HttpPostedFileBase postedFile)
+        {
+            string pathName = "";
+
+            if (postedFile != null && postedFile.ContentLength > 0 && postedFile.ContentLength <= MAX_FILE_SIZE)
+            {
+                bool canUpload = false;
+                string[] validExtensions = new string[] { ".jpg", ".png", ".jpeg" };
+                canUpload = validExtensions.Any(item => postedFile.FileName.EndsWith(item, StringComparison.OrdinalIgnoreCase));
+
+                if (canUpload)
+                {
+                    pathName = DateTime.Now.ToBinary().ToString() + Path.GetFileName(postedFile.FileName);
+                    postedFile.SaveAs(Server.MapPath("~/Content/") + pathName);
+
+                    pathName = "/Content/" + pathName;
+                }
+                else
+                {
+                    throw new ArgumentException("File type is not supported");
+                }
+            }
+            else if (postedFile != null)
+            {
+                throw new ArgumentException("File size is not valid");
+            }
+            else
+            {
+                throw new ArgumentException("File does not exist");
+            }
+
+            return pathName;
         }
     }
 }

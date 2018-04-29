@@ -222,12 +222,49 @@
     <Compile Include="Migrations\201804261759033_author.Designer.cs">
       <DependentUpon>201804261759033_author.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201804282100271_ratings.cs" />
+    <Compile Include="Migrations\201804282100271_ratings.Designer.cs">
+      <DependentUpon>201804282100271_ratings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804282153485_validation.cs" />
+    <Compile Include="Migrations\201804282153485_validation.Designer.cs">
+      <DependentUpon>201804282153485_validation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804282238242_nullableRatings.cs" />
+    <Compile Include="Migrations\201804282238242_nullableRatings.Designer.cs">
+      <DependentUpon>201804282238242_nullableRatings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804282343137_genreAndRatings.cs" />
+    <Compile Include="Migrations\201804282343137_genreAndRatings.Designer.cs">
+      <DependentUpon>201804282343137_genreAndRatings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804290002239_rat.cs" />
+    <Compile Include="Migrations\201804290002239_rat.Designer.cs">
+      <DependentUpon>201804290002239_rat.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804290005482_ra.cs" />
+    <Compile Include="Migrations\201804290005482_ra.Designer.cs">
+      <DependentUpon>201804290005482_ra.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804290007161_reviewid.cs" />
+    <Compile Include="Migrations\201804290007161_reviewid.Designer.cs">
+      <DependentUpon>201804290007161_reviewid.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804290013170_stringuserid.cs" />
+    <Compile Include="Migrations\201804290013170_stringuserid.Designer.cs">
+      <DependentUpon>201804290013170_stringuserid.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804290407532_photo.cs" />
+    <Compile Include="Migrations\201804290407532_photo.Designer.cs">
+      <DependentUpon>201804290407532_photo.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Genre.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Movie.cs" />
+    <Compile Include="Models\Rating.cs" />
     <Compile Include="Models\Review.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -320,6 +357,10 @@
     <Content Include="Views\Account\ViewUsersRoles.cshtml" />
     <Content Include="Views\Account\AddRoleToUser.cshtml" />
     <Content Include="Views\Error\AccessDenied.cshtml" />
+    <Content Include="Views\Reviews\ListOfReviewsByAuthor.cshtml" />
+    <Content Include="Views\Reviews\UserEdit.cshtml" />
+    <Content Include="Views\Reviews\Rate.cshtml" />
+    <Content Include="Views\Manage\EditProfile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -349,6 +390,33 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804261759033_author.resx">
       <DependentUpon>201804261759033_author.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804282100271_ratings.resx">
+      <DependentUpon>201804282100271_ratings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804282153485_validation.resx">
+      <DependentUpon>201804282153485_validation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804282238242_nullableRatings.resx">
+      <DependentUpon>201804282238242_nullableRatings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804282343137_genreAndRatings.resx">
+      <DependentUpon>201804282343137_genreAndRatings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804290002239_rat.resx">
+      <DependentUpon>201804290002239_rat.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804290005482_ra.resx">
+      <DependentUpon>201804290005482_ra.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804290007161_reviewid.resx">
+      <DependentUpon>201804290007161_reviewid.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804290013170_stringuserid.resx">
+      <DependentUpon>201804290013170_stringuserid.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804290407532_photo.resx">
+      <DependentUpon>201804290407532_photo.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

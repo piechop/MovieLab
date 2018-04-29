@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -62,7 +64,7 @@ namespace MovieLab.Controllers
                 : message == ManageMessageId.AddPhoneSuccess ? "Se ha agregado su número de teléfono."
                 : message == ManageMessageId.RemovePhoneSuccess ? "Se ha quitado su número de teléfono."
                 : "";
-
+            
             var userId = User.Identity.GetUserId();
             var model = new IndexViewModel
             {
@@ -73,9 +75,44 @@ namespace MovieLab.Controllers
                 BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId),
                 ReviewCount = UserManager.FindById(userId).ReviewCount,
                 UserRating = UserManager.FindById(userId).UserRating,
+                FavoriteMovie = UserManager.FindById(userId).FavoriteMovie,
+                FavoriteGenre = UserManager.FindById(userId).FavoriteGenre
+            };
+            return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult EditProfile()
+        {
+            var genreList = new List<Genre>() { Genre.Action, Genre.Adventure, Genre.Animation,
+                Genre.Comedy, Genre.Documentary, Genre.Drama, Genre.Fantasy, Genre.Horror,
+                Genre.Mystery, Genre.Romance, Genre.Science_Fiction, Genre.Thriller, Genre.Western};
+            ViewBag.Genres = new SelectList(genreList);
+
+            var userId = User.Identity.GetUserId();
+            var model = new EditProfileView
+            {
+                FavoriteGenre = UserManager.FindById(userId).FavoriteGenre,
                 FavoriteMovie = UserManager.FindById(userId).FavoriteMovie
             };
             return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult EditProfile(EditProfileView profile, FormCollection collection)
+        {
+            var genre = collection["genreList"];
+            var userId = User.Identity.GetUserId();
+            ApplicationDbContext db = new ApplicationDbContext();
+            ApplicationUser user = db.Users.Find(userId);
+
+            user.FavoriteGenre = profile.FavoriteGenre;
+            user.FavoriteMovie = profile.FavoriteMovie;
+
+            db.Entry(user).State = EntityState.Modified;
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
         }
 
         //

@@ -3,11 +3,12 @@
 @using PagedList;
 @using PagedList.Mvc;
 @{
-    ViewBag.Title = "Movie Review List";
+    ViewBag.Title = "User Reviews";
     var pagedList = (IPagedList)Model;
 }
 
-<h2>Movie Review List</h2>
+<h2>Movie Reviews by @ViewBag.User</h2>
+<span class="text-danger">@ViewBag.Error</span>
 Page @(pagedList.PageCount < pagedList.PageNumber ? 0 : pagedList.PageNumber) of @pagedList.PageCount
 @Html.PagedListPager(pagedList, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, yearFilter = ViewBag.CurrentFilter, searchCriteria = ViewBag.CurrentCriteria }))
 
@@ -35,60 +36,32 @@ Page @(pagedList.PageCount < pagedList.PageNumber ? 0 : pagedList.PageNumber) of
 
     </div>
 }*@
-@if (User.IsInRole("Movie Admin") || User.IsInRole("Site Admin"))
-{
-    <p>
-        @Html.ActionLink("Create New", "Create")
-    </p>
-}
 <table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.ReviewTitle)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Author)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.MovieTitle)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ReviewRating)
-        </th>
-        <th></th>
-    </tr>
 
-    @foreach (var item in Model)
+    @foreach (var r in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.ReviewTitle)
+                Review for @Html.DisplayFor(modelItem => r.MovieTitle) <br />
+                @Html.DisplayFor(modelItem => r.ReviewTitle) <br />
+                @Html.DisplayFor(modelItem => r.MovieRating) / 100<br />
+                @Html.DisplayFor(modelItem => r.ReviewText) <br />
+                @Html.DisplayFor(modelItem => r.ReviewTime) <br />
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Author)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MovieTitle)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReviewRating)
-            </td>
-
-            <td>
-                @if (User.IsInRole("Movie Admin") || User.IsInRole("Site Admin"))
+                @if (User.IsInRole("Movie Admin") || User.IsInRole("Site Admin") || User.Identity.GetUserName() == r.Author)
                 {
-                    @Html.ActionLink("Edit", "Edit", new { id = item.ID })
+                    @Html.ActionLink("Edit", "UserEdit", new { id = r.ID, redirect = "ListOfReviewsByAuthor" })
                     <span> |</span>
-                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                    @Html.ActionLink("Delete", "Delete", new { id = r.ID, redirect = "ListOfReviewsByAuthor" })
                     <span> |</span>
                 }
-                @Html.ActionLink("Details", "Details", new { id = item.ID })
+                @Html.ActionLink("Details", "Details", new { id = r.ID, redirect = "ListOfReviewsByAuthor" })
             </td>
         </tr>
     }
 
 </table>
 
-<div>
-    @Html.ActionLink("Return", "Admin", "Home")
-</div>
+@Html.ActionLink("Return to Account", "Index", "Manage")
+

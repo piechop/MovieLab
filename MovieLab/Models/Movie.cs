@@ -37,5 +37,7 @@ namespace MovieLab.Models
 
         [MaxLength(100, ErrorMessage = "Producer names are limited to 100 characters.")]
         public string Producer { get; set; }
+
+        public string Photo { get; set; }
     }
 }

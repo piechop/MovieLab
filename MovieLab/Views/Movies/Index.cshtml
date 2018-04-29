@@ -46,6 +46,7 @@ Page @(pagedList.PageCount < pagedList.PageNumber ? 0 : pagedList.PageNumber) of
 }
 <table class="table">
     <tr>
+        <th></th>
         <th>
             @Html.ActionLink(@Html.DisplayNameFor(model => model.Title).ToHtmlString(), "Index", new { sortOrder = "Title" })
         </th>
@@ -61,6 +62,12 @@ Page @(pagedList.PageCount < pagedList.PageNumber ? 0 : pagedList.PageNumber) of
     @foreach (var item in Model)
     {
         <tr>
+            <td>
+                @if (@Html.DisplayFor(modelItem => item.Photo).ToHtmlString() != "")
+                {
+                    <img src='@Html.DisplayFor(modelItem => item.Photo).ToHtmlString()' alt="Movie Photo" height="200" width="150" />
+                }
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
             </td>

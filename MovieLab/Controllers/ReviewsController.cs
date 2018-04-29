@@ -9,22 +9,65 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using MovieLab.CustomAttributes;
 using MovieLab.Models;
+using PagedList;
 
 namespace MovieLab.Controllers
 {
     public class ReviewsController : Controller
     {
+        private int _pageSize;
+        private int _pageNumber;
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Reviews
-        public ActionResult Index()
+        [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin")]
+        public ActionResult Index(int? page)
         {
-            return View(BuildReviewViewModelList(db.review.ToList()));
+            _pageSize = 10;
+            _pageNumber = (page ?? 1);
+
+            return View(BuildReviewViewModelList(db.review.ToList()).ToPagedList(_pageNumber, _pageSize));
+        }
+        
+        [HttpGet]
+        public ActionResult ListOfReviewsByAuthor(int? page)
+        {
+            _pageSize = 10;
+            _pageNumber = (page ?? 1);
+
+            string user = User.Identity.GetUserName();
+            var reviews = db.review.Where(r => r.Author == user).ToList();
+            ViewBag.User = user;
+
+            return View(BuildReviewViewModelList(reviews).ToPagedList(_pageNumber, _pageSize));
+        }
+
+        [HttpGet]
+        public ActionResult ListOfReviewsByMovie(int movieID, int? page)
+        {
+            _pageSize = 10;
+            _pageNumber = (page ?? 1);
+
+            var reviews = db.review.Where(r => r.MovieID == movieID).ToList();
+
+            var movie = db.movie.FirstOrDefault(m => m.ID == movieID);
+            ViewBag.Movie = movie;
+
+            if (movie != null)
+            {
+                return View(reviews.ToPagedList(_pageNumber, _pageSize));
+            }
+            else
+            {
+                ViewBag.ErrorMessage = "Movie not found.";
+                return View("Error");
+            }
         }
 
         // GET: Reviews/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(int? id, string redirect = "Index")
         {
+            ViewBag.Action = redirect;
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -54,7 +97,7 @@ namespace MovieLab.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin")]
-        public ActionResult Create([Bind(Include = "ID,ReviewText,MovieRating,ReviewRating,ReviewTime,MovieID,ReviewTitle")] Review review)
+        public ActionResult Create([Bind(Include = "Author, Ratings,ID,ReviewText,MovieRating,ReviewRating,ReviewTime,MovieID,ReviewTitle")] Review review)
         {
             if (ModelState.IsValid)
             {
@@ -79,7 +122,7 @@ namespace MovieLab.Controllers
 
             Review review = db.review.Find(id);
 
-            if (User.Identity.GetUserName() == review.Author || User.IsInRole("Site Admin") || User.IsInRole("Move Admin"))
+            if (User.Identity.GetUserName() == review.Author || User.IsInRole("Site Admin") || User.IsInRole("Movie Admin"))
             {
                 SelectList list = new SelectList(movieList, "Id", "Title");
 
@@ -99,15 +142,74 @@ namespace MovieLab.Controllers
             }
         }
 
+        [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin, Reviewer")]
+        public ActionResult UserEdit(int? id, string redirect = "ListOfReviewsByMovie")
+        {
+            ViewBag.Redirect = redirect;
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var movieList = db.movie.Select(m => m);
+
+            Review review = db.review.Find(id);
+
+            if (User.Identity.GetUserName() == review.Author || User.IsInRole("Site Admin") || User.IsInRole("Movie Admin"))
+            {
+                SelectList list = new SelectList(movieList, "Id", "Title");
+
+                ViewBag.SelectMovieList = list;
+
+                ReviewViewModel reviewViewModel = BuildReviewViewModel(review);
+
+                if (review == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(reviewViewModel);
+            }
+            else
+            {
+                return RedirectToAction("AccessDenied", "Error");
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin, Reviewer")]
+        public ActionResult UserEdit([Bind(Include = "Ratings,Author,ID,ReviewText,MovieRating,ReviewRating,ReviewTime,MovieID,ReviewTitle")] Review review, string redirect = "ListOfReviewsByMovie")
+        {
+            if (User.Identity.GetUserName() == review.Author || User.IsInRole("Site Admin") || User.IsInRole("Movie Admin"))
+            {
+                if (ModelState.IsValid)
+                {
+                    db.Entry(review).State = EntityState.Modified;
+                    db.SaveChanges();
+                    if(redirect == "ListOfReviewsByMovie")
+                    {
+                        return RedirectToAction(redirect, new { movieID = review.MovieID });
+                    }
+                    else
+                    {
+                        return RedirectToAction(redirect);
+                    }
+                }
+                return View(review);
+            }
+            else
+            {
+                return RedirectToAction("AccessDenied", "Error");
+            }
+        }
+
         // POST: Reviews/Edit/5
         // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
         // más información vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin, Reviewer")]
-        public ActionResult Edit([Bind(Include = "ID,ReviewText,MovieRating,ReviewRating,ReviewTime,MovieID,ReviewTitle")] Review review)
+        public ActionResult Edit([Bind(Include = "Author,ID,ReviewText,MovieRating,ReviewRating,ReviewTime,MovieID,ReviewTitle")] Review review)
         {
-            if (User.Identity.GetUserName() == review.Author || User.IsInRole("Site Admin") || User.IsInRole("Move Admin"))
+            if (User.Identity.GetUserName() == review.Author || User.IsInRole("Site Admin") || User.IsInRole("Movie Admin"))
             {
                 if (ModelState.IsValid)
                 {
@@ -123,10 +225,98 @@ namespace MovieLab.Controllers
             }
         }
 
+        public ActionResult Rate(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var movieList = db.movie.Select(m => m);
+
+            Review review = db.review.Find(id);
+
+            if (User.Identity.GetUserName() != review.Author || User.IsInRole("Site Admin") || User.IsInRole("Movie Admin"))
+            {
+                ReviewViewModel reviewViewModel = BuildReviewViewModel(review);
+
+                if (review == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(reviewViewModel);
+            }
+            else if(User.Identity.GetUserName() == review.Author)
+            {
+                ViewBag.Error = "You cannot rate your own review.";
+                return RedirectToAction("ListOfReviewsByAuthor");
+            }
+            else
+            {
+                return RedirectToAction("AccessDenied", "Error");
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin, Reviewer")]
+        public ActionResult Rate([Bind(Include = "Ratings,Author,ID,ReviewText,MovieRating,ReviewRating,ReviewTime,MovieID,ReviewTitle")] Review review, FormCollection collection)
+        {
+            string userID = User.Identity.GetUserId();
+            var rated = db.rating.Where(r => r.ReviewID == review.ID).Where(u => u.UserID == userID);
+            if (rated.Count() == 0 && (User.Identity.GetUserName() != review.Author || User.IsInRole("Site Admin") || User.IsInRole("Movie Admin")))
+            {
+                int rating = int.Parse(collection["ReviewRating"].Split(',')[1]);
+                if (ModelState.IsValid && (rating <= 100 && rating > 0))
+                {
+                    review.Ratings = (review.Ratings == null? 1 : review.Ratings + 1);
+                    review.ReviewRating = (byte)((rating + review.ReviewRating) / (review.Ratings > 1 ? 2 : 1));
+                    
+                    db.rating.Add(new Rating { UserID = User.Identity.GetUserId(), Rate = (byte)rating, ReviewID = review.ID });
+                    
+                    db.Entry(review).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    var userReviews = db.review.Where(u => u.Author == review.Author);
+                    int userRating = review.ReviewRating;
+                    foreach (Review rev in userReviews)
+                    {
+                        userRating += rev.ReviewRating;
+                    }
+
+                    userRating = userRating / (userReviews.Count() + 1);
+
+                    var user = db.Users.Where(us => us.UserName == review.Author).FirstOrDefault();
+                    if (user != null)
+                    {
+                        user.UserRating = userRating;
+                    }
+
+                    db.Entry(user).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    return RedirectToAction("ListOfReviewsByMovie", new { movieID = review.MovieID});
+                }
+                else if(rating > 100 || rating < 0)
+                {
+                    ViewBag.Error = "Your rating must be between 0 and 100";
+                }
+                return View(BuildReviewViewModel(review));
+            }
+            else if(rated.Count() > 0)
+            {
+                ViewBag.Error = "You've already rated this review.";
+                return View(BuildReviewViewModel(review));
+            }
+            else
+            {
+                return RedirectToAction("AccessDenied", "Error");
+            }
+        }
+
         // GET: Reviews/Delete/5
         [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin, Reviewer")]
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(int? id, string redirect = "Index")
         {
+            ViewBag.Action = redirect;
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -134,7 +324,7 @@ namespace MovieLab.Controllers
 
             Review review = db.review.Find(id);
 
-            if (User.Identity.GetUserName() == review.Author || User.IsInRole("Site Admin") || User.IsInRole("Move Admin"))
+            if (User.Identity.GetUserName() == review.Author || User.IsInRole("Site Admin") || User.IsInRole("Movie Admin"))
             {
                 ReviewViewModel reviewViewModel = BuildReviewViewModel(review);
 
@@ -154,14 +344,28 @@ namespace MovieLab.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin, Reviewer")]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int id, string redirect = "Index")
         {
             Review review = db.review.Find(id);
-            if (User.Identity.GetUserName() == review.Author || User.IsInRole("Site Admin") || User.IsInRole("Move Admin"))
+            if (User.Identity.GetUserName() == review.Author || User.IsInRole("Site Admin") || User.IsInRole("Movie Admin"))
             {
+                var user = db.Users.Where(u => u.UserName == review.Author).FirstOrDefault();
+                if(user != null)
+                {
+                    user.ReviewCount = user.ReviewCount - 1;
+                    db.Entry(user).State = EntityState.Modified;
+                }
+
                 db.review.Remove(review);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                if(redirect == "ListOfReviewsByMovie")
+                {
+                    return RedirectToAction(redirect, new { movieID = review.MovieID});
+                }
+                else
+                {
+                    return RedirectToAction(redirect);
+                }
             }
             else
             {
@@ -178,9 +382,11 @@ namespace MovieLab.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin, Reviewer")]
-        public ActionResult UserCreate([Bind(Include = "ID, Author, ReviewTime, ReviewTitle, MovieRating, ReviewRating, ReviewText, MovieID")] Review review, int movieID)
+        public ActionResult UserCreate([Bind(Include = "Ratings,ID, Author, ReviewTime, ReviewTitle, MovieRating, ReviewRating, ReviewText, MovieID")] Review review, int movieID)
         {
-            if(ModelState.IsValid)
+            string userName = User.Identity.GetUserName();
+            var previousReviews = db.review.Where(r => r.MovieID == movieID).Where(u => u.Author == userName);
+            if(previousReviews.Count() == 0 && ModelState.IsValid)
             {
                 ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
                 user.ReviewCount = user.ReviewCount + 1;
@@ -191,26 +397,12 @@ namespace MovieLab.Controllers
                 db.SaveChanges();
                 return RedirectToAction("ListOfReviewsByMovie", new { movieID = review.MovieID });
             }
+            else if(previousReviews.Count() > 0)
+            {
+                ViewBag.Error = "You've already written a review for this movie.";
+            }
 
             return View(review);
-        }
-
-        public ActionResult ListOfReviewsByMovie(int movieID)
-        {
-            var reviews = db.review.Where(r => r.MovieID == movieID).ToList();
-
-            var movie = db.movie.FirstOrDefault(m => m.ID == movieID);
-            ViewBag.Movie = movie;
-
-            if(movie != null)
-            {
-                return View(reviews);
-            }
-            else
-            {
-                ViewBag.ErrorMessage = "Movie not found.";
-                return View("Error");
-            }
         }
 
         protected override void Dispose(bool disposing)
@@ -230,6 +422,7 @@ namespace MovieLab.Controllers
             return new ReviewViewModel()
             {
                 ID = review.ID,
+                Ratings = review.Ratings,
                 ReviewRating = review.ReviewRating,
                 MovieRating = review.MovieRating,
                 ReviewTitle = review.ReviewTitle,

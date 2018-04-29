@@ -12,16 +12,21 @@
 
     @if (User.IsInRole("Reviewer"))
     {
-        <dl class="dl-horizontal">
-            <dt>@Html.DisplayNameFor(model => model.FavoriteMovie).ToHtmlString():</dt>
-            <dd>@Html.DisplayFor(model => model.FavoriteMovie)</dd>
+    <dl class="dl-horizontal">
+        <dt>@Html.DisplayNameFor(model => model.FavoriteMovie).ToHtmlString():</dt>
+        <dd>@Html.DisplayFor(model => model.FavoriteMovie)</dd>
 
-            <dt>@Html.DisplayNameFor(model => model.ReviewCount).ToHtmlString():</dt>
-            <dd>@Html.DisplayFor(model => model.ReviewCount)</dd>
+        <dt>@Html.DisplayNameFor(model => model.FavoriteGenre).ToHtmlString():</dt>
+        <dd>@Html.DisplayFor(model => model.FavoriteGenre)</dd>
 
-            <dt>@Html.DisplayNameFor(model => model.UserRating).ToHtmlString():</dt>
-            <dd>@Html.DisplayFor(model => model.UserRating)</dd>
-        </dl>
+        <dt>@Html.DisplayNameFor(model => model.ReviewCount).ToHtmlString():</dt>
+        <dd>@Html.DisplayFor(model => model.ReviewCount) | @Html.ActionLink("See all written reviews", "ListOfReviewsByAuthor", "Reviews")</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.UserRating).ToHtmlString():</dt>
+        <dd>@Html.DisplayFor(model => model.UserRating)</dd>
+    </dl>
+
+    @Html.ActionLink("Edit Profile", "EditProfile");
     }
 
     <hr />
