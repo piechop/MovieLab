@@ -232,7 +232,7 @@ namespace MovieLab.Controllers
         [NonAction]
         private IEnumerable<Movie> FilterMoviesByCriteria(string searchCriteria, IEnumerable<Movie> movies)
         {
-            if (searchCriteria != null)
+            if (searchCriteria != null && searchCriteria != "")
             {
                 ViewBag.CurrentCriteria = searchCriteria;
                 movies = movies.Where(m => m.Title.ToUpper().Contains(searchCriteria.ToUpper()));
@@ -279,9 +279,12 @@ namespace MovieLab.Controllers
         [NonAction]
         private IEnumerable<Movie> FilterMoviesByGenre(string genreFilter, IEnumerable<Movie> movies)
         {
-            ViewBag.CurrentGenre = genreFilter;
+            if(genreFilter != null && genreFilter != "")
+            {
+                ViewBag.CurrentGenre = genreFilter;
 
-            movies = movies.Where(m => m.Genre.ToString() == genreFilter);
+                movies = movies.Where(m => m.Genre.ToString() == genreFilter);
+            }
 
             return movies;
         }
