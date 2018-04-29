@@ -40,6 +40,7 @@ namespace MovieLab.Models
 
         public string Photo { get; set; }
 
+        [DataType(DataType.MultilineText)]
         public string Synopsis { get; set; }
     }
 }

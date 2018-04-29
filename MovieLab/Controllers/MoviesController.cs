@@ -111,7 +111,7 @@ namespace MovieLab.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin")]
-        public ActionResult Edit([Bind(Include = "ID,Title,Genre,Release,MinuteLength,Director,Producer, Photo")] Movie movie, HttpPostedFileBase fileUpload, FormCollection collection)
+        public ActionResult Edit([Bind(Include = "ID,Title,Genre,Release,MinuteLength,Director,Producer, Photo, Synopsis")] Movie movie, HttpPostedFileBase fileUpload, FormCollection collection)
         {
             if (ModelState.IsValid)
             {
