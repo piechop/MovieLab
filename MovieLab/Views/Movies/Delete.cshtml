@@ -10,6 +10,7 @@
 <div>
     <h4>Movie</h4>
     <hr />
+    <img src='@Html.DisplayFor(model => model.Photo).ToHtmlString()' class="col-md-2" alt="Movie Photo" height="200" width="150" />
     <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.Title)
@@ -59,9 +60,18 @@
             @Html.DisplayFor(model => model.Producer)
         </dd>
 
+        <dt>
+            @Html.DisplayNameFor(model => model.Synopsis)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Synopsis)
+        </dd>
+
     </dl>
 
-    @using (Html.BeginForm()) {
+    @using (Html.BeginForm())
+    {
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">

@@ -72,7 +72,7 @@ namespace MovieLab.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AuthorizeOrRedirectAttribute(Roles = "Movie Admin, Site Admin")]
-        public ActionResult Create([Bind(Include = "ID,Title,Genre,Release,MinuteLength,Director,Producer, Photo")] Movie movie, HttpPostedFileBase fileUpload)
+        public ActionResult Create([Bind(Include = "ID,Title,Genre,Release,MinuteLength,Director,Producer, Photo, Synopsis")] Movie movie, HttpPostedFileBase fileUpload)
         {
             if (ModelState.IsValid)
             {
