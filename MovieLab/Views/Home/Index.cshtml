@@ -3,16 +3,18 @@
 @{
     ViewBag.Title = "Home Page";
 
+    Random ran = new Random();
+
     MovieLab.Models.ApplicationDbContext db = new MovieLab.Models.ApplicationDbContext();
     List<MovieLab.Models.Movie> movies = db.movie.ToList();
 
     List<Point> ratings = new List<Point>();
-    foreach(MovieLab.Models.Movie movie in movies)
+    foreach (MovieLab.Models.Movie movie in movies)
     {
         int averageRating = 0;
         var reviews = db.review.Where(r => r.MovieID == movie.ID);
 
-        foreach(MovieLab.Models.Review rev in reviews)
+        foreach (MovieLab.Models.Review rev in reviews)
         {
             averageRating = averageRating + rev.MovieRating;
         }
@@ -24,11 +26,11 @@
 
     List<Point> topRatings = ratings.OrderByDescending(r => r.X).Take(5).ToList();
     List<MovieLab.Models.Movie> topMovies = new List<MovieLab.Models.Movie>();
-    foreach(Point p in topRatings)
+    foreach (Point p in topRatings)
     {
-        foreach(MovieLab.Models.Movie m in movies)
+        foreach (MovieLab.Models.Movie m in movies)
         {
-            if(p.Y == m.ID)
+            if (p.Y == m.ID)
             {
                 topMovies.Add(m);
                 break;
@@ -47,70 +49,72 @@
 
 <div class="row">
     <aside style="float:right; background-color:#eeeeee; border-radius: 10px;" class="col-md-3">
-    
-        <h4>Movie Showings Near You</h4>
+
+        <h4>You might be interested in...</h4>
 
         <table class="table">
             <tr><th>Movie</th><th>Date</th></tr>
-            @for(int i = 0; i < 10; i++)
+
+            @for (int i = 0; i < 10; i++)
             {
-                <tr><td><a href="@Url.Action("ListOfReviewsByMovie", "Reviews",new { movieID = movies[i].ID})">@movies[i].Title</a></td><td>@movies[i].Release</td></tr>
+                int m = ran.Next(movies.Count());
+                <tr><td><a href="@Url.Action("ListOfReviewsByMovie", "Reviews",new { movieID = movies[m].ID})">@movies[m].Title</a></td><td>@movies[m].Release</td></tr>
             }
         </table>
-    
+
     </aside>
 
     <!--https://www.w3schools.com/bootstrap/bootstrap_carousel.asp-->
     <div class="col-md-4">
-    <h4>Top Reviewed Movies</h4>
-    <div id="myCarousel" class="carousel slide" data-ride="carousel">
-        <!-- Indicators -->
-        <ol class="carousel-indicators">
-            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-            <li data-target="#myCarousel" data-slide-to="1"></li>
-            <li data-target="#myCarousel" data-slide-to="2"></li>
-            <li data-target="#myCarousel" data-slide-to="3"></li>
-            <li data-target="#myCarousel" data-slide-to="4"></li>
-        </ol>
+        <h4>Top Reviewed Movies</h4>
+        <div id="myCarousel" class="carousel slide" data-ride="carousel">
+            <!-- Indicators -->
+            <ol class="carousel-indicators">
+                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                <li data-target="#myCarousel" data-slide-to="1"></li>
+                <li data-target="#myCarousel" data-slide-to="2"></li>
+                <li data-target="#myCarousel" data-slide-to="3"></li>
+                <li data-target="#myCarousel" data-slide-to="4"></li>
+            </ol>
 
-        <!-- Wrapper for slides -->
-        <div class="carousel-inner">
-            <div class="item active">
-                <a href="@Url.Action("ListOfReviewsByMovie", "Reviews", new { movieID = topMovies[0].ID })"><img src="@topMovies[0].Photo" style="min-width: 100%; height: 400px; width:300px; max-width: none;" alt="1st Place"></a>
-                <strong style="margin:auto; float:right;">@topMovies[0].Title</strong><br/>
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner">
+                <div class="item active">
+                    <a href="@Url.Action("ListOfReviewsByMovie", "Reviews", new { movieID = topMovies[0].ID })"><img src="@topMovies[0].Photo" style="min-width: 100%; height: 400px; width:300px; max-width: none;" alt="1st Place"></a>
+                    <strong style="margin:auto; float:right;">@topMovies[0].Title</strong><br />
+                </div>
+
+                <div class="item">
+                    <a href="@Url.Action("ListOfReviewsByMovie", "Reviews", new { movieID = topMovies[1].ID })"><img src="@topMovies[1].Photo" style="min-width: 100%; height: 400px; width:300px; max-width: none;" alt="2nd Place"></a>
+                    <strong style="margin:auto; float:right;">@topMovies[1].Title</strong><br />
+                </div>
+
+                <div class="item">
+                    <a href="@Url.Action("ListOfReviewsByMovie", "Reviews", new { movieID = topMovies[2].ID })"><img src="@topMovies[2].Photo" style="min-width: 100%; height: 400px;  width:300px; max-width: none;" alt="3rd Place"></a>
+                    <strong style="margin:auto; float:right;">@topMovies[2].Title</strong><br />
+                </div>
+
+                <div class="item">
+                    <a href="@Url.Action("ListOfReviewsByMovie", "Reviews", new { movieID = topMovies[3].ID })"><img src="@topMovies[3].Photo" style="min-width: 100%; height: 400px; width:300px; max-width: none;" alt="4th Place"></a>
+                    <strong style="margin:auto; float:right;">@topMovies[3].Title</strong><br />
+                </div>
+
+                <div class="item">
+                    <a href="@Url.Action("ListOfReviewsByMovie", "Reviews", new { movieID = topMovies[4].ID })"><img src="@topMovies[4].Photo" style="min-width: 100%; height: 400px; width:300px; max-width: none;" alt="5th Place"></a>
+                    <strong style="margin:auto; float:right;">@topMovies[4].Title</strong><br />
+                </div>
             </div>
 
-            <div class="item">
-                <a href="@Url.Action("ListOfReviewsByMovie", "Reviews", new { movieID = topMovies[1].ID })"><img src="@topMovies[1].Photo" style="min-width: 100%; height: 400px; width:300px; max-width: none;" alt="2nd Place"></a>
-                <strong style="margin:auto; float:right;">@topMovies[1].Title</strong><br />
-            </div>
-
-            <div class="item">
-                <a href="@Url.Action("ListOfReviewsByMovie", "Reviews", new { movieID = topMovies[2].ID })"><img src="@topMovies[2].Photo" style="min-width: 100%; height: 400px;  width:300px; max-width: none;" alt="3rd Place"></a>
-                <strong style="margin:auto; float:right;">@topMovies[2].Title</strong><br />
-            </div>
-
-            <div class="item">
-                <a href="@Url.Action("ListOfReviewsByMovie", "Reviews", new { movieID = topMovies[3].ID })"><img src="@topMovies[3].Photo" style="min-width: 100%; height: 400px; width:300px; max-width: none;" alt="4th Place"></a>
-                <strong style="margin:auto; float:right;">@topMovies[3].Title</strong><br />
-            </div>
-
-            <div class="item">
-                <a href="@Url.Action("ListOfReviewsByMovie", "Reviews", new { movieID = topMovies[4].ID })"><img src="@topMovies[4].Photo" style="min-width: 100%; height: 400px; width:300px; max-width: none;" alt="5th Place"></a>
-                <strong style="margin:auto; float:right;">@topMovies[4].Title</strong><br />
-            </div>
+            <!-- Left and right controls -->
+            <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="right carousel-control" href="#myCarousel" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                <span class="sr-only">Next</span>
+            </a>
         </div>
-        
-        <!-- Left and right controls -->
-        <a class="left carousel-control" href="#myCarousel" data-slide="prev">
-            <span class="glyphicon glyphicon-chevron-left"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="right carousel-control" href="#myCarousel" data-slide="next">
-            <span class="glyphicon glyphicon-chevron-right"></span>
-            <span class="sr-only">Next</span>
-        </a>
-    </div>
     </div>
     <div class="col-md-5">
         <h2>About our service</h2>
