@@ -16,14 +16,14 @@ namespace MovieLab.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            ViewBag.Message = "More about the Movie Manager";
 
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "Contact us here with any of your questions or concerns.";
 
             return View();
         }

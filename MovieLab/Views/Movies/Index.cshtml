@@ -92,8 +92,7 @@ Page @(pagedList.PageCount < pagedList.PageNumber ? 0 : pagedList.PageNumber) of
                     @Html.ActionLink("Delete", "Delete", new { id = item.ID });
                     <span> |</span>
                 }
-                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
-                @Html.ActionLink("Reviews", "ListOfReviewsByMovie", "Reviews", new { movieID = item.ID }, null)
+                @Html.ActionLink("Details", "ListOfReviewsByMovie", "Reviews", new { movieID = item.ID }, null)
             </td>
         </tr>
     }

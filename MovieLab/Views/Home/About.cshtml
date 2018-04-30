@@ -1,7 +1,17 @@
 ﻿@{
     ViewBag.Title = "About";
 }
-<h2>@ViewBag.Title.</h2>
+<h2>@ViewBag.Title</h2>
 <h3>@ViewBag.Message</h3>
 
-<p>Use this area to provide additional information.</p>
+<p>
+    The Movie Manager offers a selection of historic and modern movies to peruse at your leisure.
+    <br /><br/>
+    The Movie Manager web application is designed to give users the ability to quickly and easily view, rate, and review the ultimate
+    collection of movies from any device with an internet connection. Rate your favorite movie out of 100. Write an A+ review.
+    <br /><br/>
+    The ability to rate and review movies are reserved for registered users. While anyone can learn more about any movie, view its ratings, 
+    and read its reviews, only registered users will be able to create content – namely, reviews that their peers will have the opportunity to enjoy.
+    <br/><br/>
+    If any of this interests you, then <a href="@Url.Action("Register","Account")">sign up</a> today!
+</p>
